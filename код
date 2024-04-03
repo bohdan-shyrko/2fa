@@ -1,0 +1,47 @@
+import random
+import string
+
+class TwoFactorAuth:
+    def __init__(self):
+        self.users = {}
+
+    def register_user(self, username, password, phone_number):
+        if username in self.users:
+            return False, "Користувач з таким іменем вже існує"
+        self.users[username] = {'password': password, 'phone_number': phone_number}
+        return True, "Користувач успішно зареєстрований"
+
+    def login(self, username, password):
+        if username not in self.users:
+            return False, "Користувача з таким іменем не існує"
+        if self.users[username]['password'] != password:
+            return False, "Неправильний пароль"
+        return True, "Успішний вхід"
+
+    def send_verification_code(self, phone_number):
+        verification_code = ''.join(random.choices(string.digits, k=6))
+        # Логіка для відправки коду підтвердження на телефон
+        print(f"Код підтвердження {verification_code} відправлено на {phone_number}")
+        return verification_code
+
+    def verify_code(self, username, code):
+        if username not in self.users:
+            return False, "Користувача з таким іменем не існує"
+        saved_code = self.send_verification_code(self.users[username]['phone_number'])
+        if code == saved_code:
+            return True, "Код підтвердження вірний"
+        return False, "Невірний код підтвердження"
+
+
+# Приклад використання
+auth_system = TwoFactorAuth()
+
+# Реєстрація користувача
+print(auth_system.register_user("Bohdan Shyrko", "cybersecurity123", "+1312418866"))
+
+# Вхід користувача з логіном та паролем
+print(auth_system.login("Bohdan Shyrko", "cybersecurity123"))
+
+# Перевірка коду підтвердження
+print(auth_system.verify_code("Bohdan Shyrko", "cybersecurity123"))
+
